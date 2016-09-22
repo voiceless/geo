@@ -30,6 +30,4 @@ object GeneratorMain extends App {
     writer.println("tile_x,tile_y,distance_error")
     (1 to size).toStream.map(i => Grid(random.nextInt(360), random.nextInt(360), random.nextDouble() * 10)).foreach(g => writer.println(g.toScvString))
   }
-
-
 }

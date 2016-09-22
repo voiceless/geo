@@ -32,7 +32,7 @@ class SparkSQL(implicit inj: Injector) extends DAO with Injectable {
     val grid = labelSelect.flatMap(l => grids.selectExpr(s"distance_error > ${l.distance}").where(s"tile_x = ${l.lat} and tile_y= ${l.lon}").take(1) match {
       case array if array.length == 1 => Some(array(0))
       case _ => None
-    }).map(_(0))
+    }).map(_ (0))
     grid.exists(b => b.toString.toBoolean)
   }
 
@@ -42,4 +42,7 @@ class SparkSQL(implicit inj: Injector) extends DAO with Injectable {
     }
   }
 
+  override def countLabelsInInGrid(lon: Int, lat: Int): Long = {
+    labels.where(s"lon > $lon AND lon < $lon + 1 AND lat > $lat AND lat < $lat + 1").count()
+  }
 }
