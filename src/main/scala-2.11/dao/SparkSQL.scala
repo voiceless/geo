@@ -2,7 +2,7 @@ package dao
 
 import org.apache.spark.sql.SparkSession
 import scaldi.{Injectable, Injector}
-import util.Calculator
+import util.{Calculator, Parser}
 
 /**
   * Created by pbezglasnyi on 21.09.2016.
@@ -24,15 +24,22 @@ class SparkSQL(implicit inj: Injector) extends DAO with Injectable {
   val grids = spark.read.option("header", true).csv(gridsLocation)
 
   override def isNear(lat: Double, lon: Double, user_id: Int): Boolean = {
-    val arr = labels.selectExpr("lon", "lat", s"haversine(lat, lon, $lat, $lon)").where(s"user_id = $user_id").take(1)
-    val label = arr match {
-      case array if array.length == 1 => Some(arr(0))
+    val label = labels.selectExpr("lon", "lat", s"haversine(lat, lon, $lat, $lon)").where(s"user_id = $user_id").take(1) match {
+      case array if array.length == 1 => Some(array(0))
       case _ => None
     }
-    val vargs = label.map(row => (row(0), row(1), row(2))).map(t => (t._1.toString.toDouble.toInt, t._2.toString.toDouble.toInt, t._2.toString.toDouble.toInt))
-    val grid = Option(grids.select("distance_error").where("tile_x = 31 and tile_y=41"))
-    true
+    val labelSelect = label.map(row => (row(0), row(1), row(2))).map(t => new LabelSelect(t._1, t._2, t._3))
+    val grid = labelSelect.flatMap(l => grids.selectExpr(s"distance_error > ${l.distance}").where(s"tile_x = ${l.lat} and tile_y= ${l.lon}").take(1) match {
+      case array if array.length == 1 => Some(array(0))
+      case _ => None
+    }).map(_(0))
+    grid.exists(b => b.toString.toBoolean)
   }
 
+  private case class LabelSelect(lon: Int, lat: Int, distance: Double) {
+    def this(lon: Any, lat: Any, distance: Any) {
+      this(Parser.parseIntDouble(lon).toInt, Parser.parseIntDouble(lat).toInt, Parser.parseIntDouble(distance).toInt)
+    }
+  }
 
 }
