@@ -23,13 +23,11 @@ object GeneratorMain extends App {
 
   def generateLabel(size: Int, file: File) {
     val writer = file.printWriter()
-    writer.println("user_id,lon,lat")
     (1 to size).toStream.map(i => Label(i, random.nextDouble() * 360, random.nextDouble() * 360)).foreach(l => writer.println(l.toCsvString))
   }
 
   def generateGrid(file: File) {
     val writer = file.printWriter()
-    writer.println("tile_x,tile_y,distance_error")
-    (0 until 360).map(i => (0 until 360).map(j => Grid(i, j, random.nextDouble())).foreach(g => writer.println(g.toCsvString)))
+    (0 until 360).foreach(i => (0 until 360).map(j => Grid(i, j, random.nextDouble())).foreach(g => writer.println(g.toCsvString)))
   }
 }
