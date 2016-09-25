@@ -26,9 +26,6 @@ class HiveDao(implicit inj: Injector) extends DAO with Injectable {
   sql("CREATE TABLE IF NOT EXISTS grid (tile_x INT,tile_y INT,distance_error DOUBLE) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'")
   sql(s"LOAD DATA LOCAL INPATH '$gridsLocation' INTO TABLE grid")
 
-
-  spark.udf.register("haversine", Calculator.haversine(_: Double, _: Double, _: Double, _: Double))
-
   override def isNear(lat: Double, lon: Double, user_id: Int): Boolean = {
     val label = sql(s"SELECT lon, lat, haversine(lat, lon, $lat, $lon) FROM label WHERE user_id = $user_id").take(1) match {
       case array if array.length == 1 => Some(array(0))
