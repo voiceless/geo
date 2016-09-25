@@ -37,6 +37,38 @@ class GeoServiceActor(implicit injector: Injector) extends HttpService with Json
           ctx => ctx.complete(CountResponse(dao.countLabelsInInGrid(lon, lat)))
         }
       }
+    } ~
+    pathPrefix("user") {
+      put {
+        parameters('lon.as[Double], 'lat.as[Double]) {
+          (lon, lat) => {
+            ctx => {
+              dao.insertUser(lon, lat)
+              ctx.complete("ok")
+            }
+          }
+        }
+      } ~
+        post {
+          parameters('user_id.as[Int], 'lon.as[Double], 'lat.as[Double]) {
+            (user_id, lon, lat) => {
+              ctx => {
+                dao.updateUser(user_id, lon, lat)
+                ctx.complete("ok")
+              }
+            }
+          }
+        } ~
+        delete {
+          parameter('user_id.as[Int]) {
+            user_id => {
+              ctx => {
+                dao.deleteUser(user_id)
+                ctx.complete("ok")
+              }
+            }
+          }
+        }
     }
 
 }

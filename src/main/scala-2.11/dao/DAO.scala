@@ -17,6 +17,6 @@ trait DAO {
 
   def deleteUser(user_id: Int): Unit
 
-  def getUser(user_id: Int):Label
+  def getUser(user_id: Int): Option[Label]
 
 }

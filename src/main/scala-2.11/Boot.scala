@@ -10,7 +10,8 @@ import spray.can.Http
   */
 object Boot extends App with AkkaInjectable {
 
-  System.setProperty("hadoop.home.dir", "C:\\winutil\\")
+//  System.setProperty("hadoop.home.dir", "C:\\winutil\\")
+  System.setProperty("hadoop.home.dir", "D:\\hadoop\\hadoop-2.6.0")
 
   val labelsLocation = args(0)
   val gridLocation = args(1)

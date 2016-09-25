@@ -19,17 +19,12 @@ class HiveDao(implicit inj: Injector) extends DAO with Injectable {
   import spark.sql
 
   sql("DROP TABLE IF EXISTS label")
-  sql("CREATE TABLE IF NOT EXISTS label (user_id INT, lon DOUBLE, lat DOUBLE) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'")
+  sql("CREATE TABLE IF NOT EXISTS label (user_id INT, lon DOUBLE, lat DOUBLE) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' TBLPROPERTIES ('transactional'='true')")
   sql(s"LOAD DATA LOCAL INPATH '$labelsLocation' INTO TABLE label")
 
   sql("DROP TABLE IF EXISTS grid")
   sql("CREATE TABLE IF NOT EXISTS grid (tile_x INT,tile_y INT,distance_error DOUBLE) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'")
   sql(s"LOAD DATA LOCAL INPATH '$gridsLocation' INTO TABLE grid")
-
-  sql("SELECT * FROM label").show()
-  sql("INSERT INTO TABLE label VALUES(11, 31.41, 41.51)")
-  sql("SELECT * FROM label").show()
-
 
 
   spark.udf.register("haversine", Calculator.haversine(_: Double, _: Double, _: Double, _: Double))
@@ -77,8 +72,11 @@ class HiveDao(implicit inj: Injector) extends DAO with Injectable {
     sql(s"DELETE FROM label WHERE user_id=$user_id")
   }
 
-  override def getUser(user_id: Int): Label = {
-    val l = sql(s"SELECT * FROM label WHERE user_id=$user_id").take(1)(0)
-    Label(l(0).toString.toInt, l(1).toString.toDouble, l(2).toString.toDouble)
+  override def getUser(user_id: Int): Option[Label] = {
+    val l = sql(s"SELECT * FROM label WHERE user_id=$user_id").take(1) match {
+      case array if array.length == 1 => Some(array(0))
+      case _ => None
+    }
+    l.map(r => Label(r(0).toString.toInt, r(1).toString.toDouble, r(2).toString.toDouble))
   }
 }
