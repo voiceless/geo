@@ -8,5 +8,5 @@ case class Label(user_id: Int, lon: Double, lat: Double) {
 }
 
 case class Grid(tile_x: Int, tile_y: Int, distance_error: Double) {
-  def toScvString = s"$tile_x,$tile_y,$distance_error"
+  def toCsvString = s"$tile_x,$tile_y,$distance_error"
 }

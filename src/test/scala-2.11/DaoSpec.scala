@@ -1,4 +1,4 @@
-import dao.{DAO, SparkSQL}
+import dao.{DAO, HiveDao, SparkSQL}
 import module.TestModule
 import org.scalatest.{FlatSpec, Matchers}
 import scaldi.Injectable
@@ -8,8 +8,10 @@ import scaldi.Injectable
   */
 class DaoSpec extends FlatSpec with Injectable with Matchers {
 
+  System.setProperty("hadoop.home.dir", "D:\\hadoop\\hadoop-2.6.0")
+
   implicit val injector = new TestModule
-  val dao: DAO = new SparkSQL
+  val dao: DAO = new HiveDao
 
   "Labels" should "work right" in {
     val b = dao.isNear(3.1, 4.3, 10)

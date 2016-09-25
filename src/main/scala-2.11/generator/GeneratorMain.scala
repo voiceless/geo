@@ -30,6 +30,6 @@ object GeneratorMain extends App {
   def generateGrid(file: File) {
     val writer = file.printWriter()
     writer.println("tile_x,tile_y,distance_error")
-    (0 until 360).map(i => (0 until 360).map(j => Grid(i, j, random.nextDouble())).foreach(g => writer.println(g.toScvString)))
+    (0 until 360).map(i => (0 until 360).map(j => Grid(i, j, random.nextDouble())).foreach(g => writer.println(g.toCsvString)))
   }
 }

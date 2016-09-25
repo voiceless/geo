@@ -5,7 +5,7 @@ package util
   */
 object Parser {
 
-  def parseIntDouble(input:Any)={
+  def parseDouble(input:Any)={
     input.toString.toDouble
   }
 }

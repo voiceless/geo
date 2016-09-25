@@ -9,13 +9,11 @@ import util.{Calculator, Parser}
   */
 class SparkSQL(implicit inj: Injector) extends DAO with Injectable {
 
-  System.setProperty("hadoop.home.dir", "C:\\winutil\\")
-
   val labelsLocation = inject[String](identified by "labels.location")
   val gridsLocation = inject[String](identified by "grids.location")
 
   val spark = SparkSession.builder().appName("name").master("local").
-    config("spark.sql.warehouse.dir", "file:///C:/work/spark_dir/").getOrCreate()
+    config("spark.sql.warehouse.dir", "file:///D:/work/spark_dir/").getOrCreate()
 
 
   spark.udf.register("haversine", Calculator.haversine(_: Double, _: Double, _: Double, _: Double))
@@ -38,7 +36,7 @@ class SparkSQL(implicit inj: Injector) extends DAO with Injectable {
 
   private case class LabelSelect(lon: Int, lat: Int, distance: Double) {
     def this(lon: Any, lat: Any, distance: Any) {
-      this(Parser.parseIntDouble(lon).toInt, Parser.parseIntDouble(lat).toInt, Parser.parseIntDouble(distance).toInt)
+      this(Parser.parseDouble(lon).toInt, Parser.parseDouble(lat).toInt, Parser.parseDouble(distance).toInt)
     }
   }
 

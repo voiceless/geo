@@ -11,4 +11,5 @@ trait DAO {
 
   def countLabelsInInGrid(lon: Int, lat: Int): Long
 
+
 }

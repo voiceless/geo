@@ -8,6 +8,7 @@ mainClass in(Compile, run) := Some("Boot")
 
 libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-sql" % "2.0.0",
+  "org.apache.spark" %% "spark-hive" % "2.0.0",
   "org.scaldi" %% "scaldi" % "0.5.7",
   "org.scaldi" %% "scaldi-akka" % "0.5.7",
   "org.scalatest" %% "scalatest" % "3.0.0",
