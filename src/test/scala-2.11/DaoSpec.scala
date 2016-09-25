@@ -30,7 +30,7 @@ class DaoSpec extends FlatSpec with Injectable with Matchers {
     dao.getUser(11) should be(Some(Label(11, 1, 1)))
   }
 
-  "Update user" should "work correcly" in {
+  /*"Update user" should "work correcly" in {
     dao.updateUser(11, 2, 1)
     dao.getUser(11) should be(Some(Label(11, 2, 1)))
   }
@@ -39,6 +39,6 @@ class DaoSpec extends FlatSpec with Injectable with Matchers {
     dao.insertUser(1, 1)
     dao.deleteUser(11)
     dao.getUser(11) should be(None)
-  }
+  }*/
 
 }
