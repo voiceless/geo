@@ -2,16 +2,17 @@ package service
 
 import akka.actor.Actor
 import dao.DAO
+import model.{CountResponse, NearResponse}
 import org.json4s.DefaultFormats
+import scaldi.Injector
 import scaldi.akka.AkkaInjectable
-import scaldi.{Injectable, Injector}
 import spray.httpx.Json4sSupport
 import spray.routing.HttpService
 
 /**
   * Created by pbezglasnyi.
   */
-class GeoServiceActor(implicit injector: Injector) extends HttpService with Json4sSupport with Actor with AkkaInjectable  {
+class GeoServiceActor(implicit injector: Injector) extends HttpService with Json4sSupport with Actor with AkkaInjectable {
 
   def actorRefFactory = context
 
@@ -25,7 +26,7 @@ class GeoServiceActor(implicit injector: Injector) extends HttpService with Json
     get {
       parameters('lon.as[Double], 'lat.as[Double], 'user_id.as[Int]) {
         (lon, lat, user_id) => {
-          ctx => ctx.complete(dao.isNear(lat, lon, 1).toString)
+          ctx => ctx.complete(NearResponse(dao.isNear(lat, lon, 1)))
         }
       }
     }
@@ -33,7 +34,7 @@ class GeoServiceActor(implicit injector: Injector) extends HttpService with Json
     pathPrefix("count") {
       parameters('lat.as[Int], 'lon.as[Int]) {
         (lat, lon) => {
-          ctx => ctx.complete(dao.countLabelsInInGrid(lon, lat).toString)
+          ctx => ctx.complete(CountResponse(dao.countLabelsInInGrid(lon, lat)))
         }
       }
     }
