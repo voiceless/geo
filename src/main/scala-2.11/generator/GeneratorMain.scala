@@ -14,10 +14,12 @@ object GeneratorMain extends App {
 
   val grids = File(args(1)).createFile()
 
+  val size = args(2).toInt
+
   val random = new Random
 
-  generateLabel(100, lebels)
-  generateGrid(100, grids)
+  generateLabel(size, lebels)
+  generateGrid(grids)
 
   def generateLabel(size: Int, file: File) {
     val writer = file.printWriter()
@@ -25,9 +27,9 @@ object GeneratorMain extends App {
     (1 to size).toStream.map(i => Label(i, random.nextDouble() * 360, random.nextDouble() * 360)).foreach(l => writer.println(l.toCsvString))
   }
 
-  def generateGrid(size: Int, file: File) {
+  def generateGrid(file: File) {
     val writer = file.printWriter()
     writer.println("tile_x,tile_y,distance_error")
-    (1 to size).toStream.map(i => Grid(random.nextInt(360), random.nextInt(360), random.nextDouble() * 10)).foreach(g => writer.println(g.toScvString))
+    (0 until 360).map(i => (0 until 360).map(j => Grid(i, j, random.nextDouble())).foreach(g => writer.println(g.toScvString)))
   }
 }
