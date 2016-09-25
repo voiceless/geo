@@ -11,5 +11,12 @@ trait DAO {
 
   def countLabelsInInGrid(lon: Int, lat: Int): Long
 
+  def insertUser(lon: Double, lat: Double): Unit
+
+  def updateUser(user_id: Int, lon: Double, lat: Double): Unit
+
+  def deleteUser(user_id: Int): Unit
+
+  def getUser(user_id: Int):Label
 
 }

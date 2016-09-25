@@ -1,5 +1,6 @@
 package dao
 
+import model.Label
 import org.apache.spark.sql.SparkSession
 import scaldi.{Injectable, Injector}
 import util.{Calculator, Parser}
@@ -24,6 +25,10 @@ class HiveDao(implicit inj: Injector) extends DAO with Injectable {
   sql("DROP TABLE IF EXISTS grid")
   sql("CREATE TABLE IF NOT EXISTS grid (tile_x INT,tile_y INT,distance_error DOUBLE) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'")
   sql(s"LOAD DATA LOCAL INPATH '$gridsLocation' INTO TABLE grid")
+
+  sql("SELECT * FROM label").show()
+  sql("INSERT INTO TABLE label VALUES(11, 31.41, 41.51)")
+  sql("SELECT * FROM label").show()
 
 
 
@@ -54,5 +59,26 @@ class HiveDao(implicit inj: Injector) extends DAO with Injectable {
     def this(lon: Any, lat: Any, distance: Any) {
       this(Parser.parseDouble(lon).toInt, Parser.parseDouble(lat).toInt, Parser.parseDouble(distance).toInt)
     }
+  }
+
+  override def insertUser(lon: Double, lat: Double): Unit = {
+    val lastId = sql(s"SELECT user_id FROM label ORDER BY user_id DESC").take(1) match {
+      case array if array.length == 1 => array(0)(0).toString.toLong
+      case _ => 0
+    }
+    sql(s"INSERT INTO label VALUES(${lastId + 1}, $lon, $lat)")
+  }
+
+  override def updateUser(user_id: Int, lon: Double, lat: Double): Unit = {
+    sql(s"UPDATE label SET lon=$lon, lat=$lat WHERE user_id=$user_id")
+  }
+
+  override def deleteUser(user_id: Int): Unit = {
+    sql(s"DELETE FROM label WHERE user_id=$user_id")
+  }
+
+  override def getUser(user_id: Int): Label = {
+    val l = sql(s"SELECT * FROM label WHERE user_id=$user_id").take(1)(0)
+    Label(l(0).toString.toInt, l(1).toString.toDouble, l(2).toString.toDouble)
   }
 }

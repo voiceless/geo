@@ -1,7 +1,7 @@
 package module
 
 import akka.actor.ActorSystem
-import dao.{DAO, SparkSQL}
+import dao.DAO
 import scaldi.Module
 import service.GeoServiceActor
 
