@@ -10,11 +10,11 @@ import scala.util.Random
   */
 object GeneratorMain extends App {
 
-  val lebels = File(args(0)).createFile()
+  val lebels = File(args(0)).createFile()   //location of label file
 
-  val grids = File(args(1)).createFile()
+  val grids = File(args(1)).createFile()   //location of grid file
 
-  val size = args(2).toInt
+  val size = args(2).toInt // count of users in label file
 
   val random = new Random
 
