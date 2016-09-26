@@ -2,7 +2,7 @@ package service
 
 import akka.actor.Actor
 import dao.DAO
-import model.{CountResponse, NearResponse}
+import model.{CountResponse, NearResponse, Ok}
 import org.json4s.DefaultFormats
 import scaldi.Injector
 import scaldi.akka.AkkaInjectable
@@ -44,7 +44,7 @@ class GeoServiceActor(implicit injector: Injector) extends HttpService with Json
           (lon, lat) => {
             ctx => {
               dao.insertUser(lon, lat)
-              ctx.complete("ok")
+              ctx.complete(Ok)
             }
           }
         }
@@ -54,7 +54,7 @@ class GeoServiceActor(implicit injector: Injector) extends HttpService with Json
             (user_id, lon, lat) => {
               ctx => {
                 dao.updateUser(user_id, lon, lat)
-                ctx.complete("ok")
+                ctx.complete(Ok)
               }
             }
           }
@@ -64,7 +64,7 @@ class GeoServiceActor(implicit injector: Injector) extends HttpService with Json
             user_id => {
               ctx => {
                 dao.deleteUser(user_id)
-                ctx.complete("ok")
+                ctx.complete(Ok)
               }
             }
           }
